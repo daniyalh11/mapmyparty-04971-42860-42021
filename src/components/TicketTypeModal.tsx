@@ -99,57 +99,46 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
             />
           </div>
 
-          <div>
-            <Label htmlFor="ticketCategory">Ticket Type *</Label>
-            <Select value={ticketCategory} onValueChange={setTicketCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="VIP">VIP</SelectItem>
-                <SelectItem value="General">General</SelectItem>
-                <SelectItem value="Premium">Premium</SelectItem>
-                <SelectItem value="Early Bird">Early Bird</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {(ticketType === "table" || ticketType === "group-pass") ? (
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="groupQuantity">Group Quantity</Label>
-                <Input
-                  id="groupQuantity"
-                  type="number"
-                  placeholder="e.g., 4"
-                  value={groupQuantity}
-                  onChange={(e) => setGroupQuantity(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="tableQuantity">Table Quantity</Label>
-                <Input
-                  id="tableQuantity"
-                  type="number"
-                  placeholder="e.g., 10"
-                  value={tableQuantity}
-                  onChange={(e) => setTableQuantity(e.target.value)}
-                />
-              </div>
-            </div>
-          ) : (
+          {(ticketType === "vip-guest" || ticketType === "standard") && (
             <div>
-              <Label htmlFor="ticketEntryType">Entry Type *</Label>
-              <RadioGroup value={ticketEntryType} onValueChange={setTicketEntryType}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="single" id="single" />
-                  <Label htmlFor="single" className="cursor-pointer font-normal">Single</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="couple" id="couple" />
-                  <Label htmlFor="couple" className="cursor-pointer font-normal">Couple</Label>
-                </div>
-              </RadioGroup>
+              <Label htmlFor="ticketCategory">Ticket Type *</Label>
+              <Select value={ticketCategory} onValueChange={setTicketCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Single">Single</SelectItem>
+                  <SelectItem value="Couple">Couple</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {ticketType === "group-pass" && (
+            <div>
+              <Label htmlFor="groupQuantity">Group Quantity *</Label>
+              <Input
+                id="groupQuantity"
+                type="number"
+                min="1"
+                placeholder="e.g., 4"
+                value={groupQuantity}
+                onChange={(e) => setGroupQuantity(e.target.value)}
+              />
+            </div>
+          )}
+
+          {ticketType === "table" && (
+            <div>
+              <Label htmlFor="tableQuantity">Table Quantity *</Label>
+              <Input
+                id="tableQuantity"
+                type="number"
+                min="1"
+                placeholder="e.g., 10"
+                value={tableQuantity}
+                onChange={(e) => setTableQuantity(e.target.value)}
+              />
             </div>
           )}
 
@@ -160,6 +149,7 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
                 <Input
                   id="price"
                   type="number"
+                  min="0"
                   placeholder="49"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
@@ -189,6 +179,8 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
                     <Input
                       id="customCgst"
                       type="number"
+                      min="0"
+                      max="100"
                       placeholder="0"
                       value={customCgst}
                       onChange={(e) => setCustomCgst(e.target.value)}
@@ -199,6 +191,8 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
                     <Input
                       id="customSgst"
                       type="number"
+                      min="0"
+                      max="100"
                       placeholder="0"
                       value={customSgst}
                       onChange={(e) => setCustomSgst(e.target.value)}
@@ -213,6 +207,8 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
                   <Input
                     id="customGst"
                     type="number"
+                    min="0"
+                    max="100"
                     placeholder="0"
                     value={customGst}
                     onChange={(e) => setCustomGst(e.target.value)}
@@ -227,6 +223,7 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
             <Input
               id="quantity"
               type="number"
+              min="1"
               placeholder="100"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
@@ -249,6 +246,7 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
             <Input
               id="maxPerCustomer"
               type="number"
+              min="1"
               placeholder="10"
               value={maxPerCustomer}
               onChange={(e) => setMaxPerCustomer(e.target.value)}
