@@ -40,6 +40,8 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
   const [customSgst, setCustomSgst] = useState("");
   const [customGst, setCustomGst] = useState("");
   const [ticketEntryType, setTicketEntryType] = useState("single");
+  const [groupQuantity, setGroupQuantity] = useState("");
+  const [tableQuantity, setTableQuantity] = useState("");
 
   const getTitle = () => {
     switch (ticketType) {
@@ -71,6 +73,8 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
       customSgst,
       customGst,
       ticketEntryType,
+      groupQuantity,
+      tableQuantity,
       type: ticketType,
     };
     onSave(data);
@@ -110,19 +114,44 @@ const TicketTypeModal = ({ open, onClose, ticketType, onSave }: TicketTypeModalP
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="ticketEntryType">Entry Type *</Label>
-            <RadioGroup value={ticketEntryType} onValueChange={setTicketEntryType}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="single" id="single" />
-                <Label htmlFor="single" className="cursor-pointer font-normal">Single</Label>
+          {(ticketType === "table" || ticketType === "group-pass") ? (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="groupQuantity">Group Quantity</Label>
+                <Input
+                  id="groupQuantity"
+                  type="number"
+                  placeholder="e.g., 4"
+                  value={groupQuantity}
+                  onChange={(e) => setGroupQuantity(e.target.value)}
+                />
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="couple" id="couple" />
-                <Label htmlFor="couple" className="cursor-pointer font-normal">Couple</Label>
+              <div>
+                <Label htmlFor="tableQuantity">Table Quantity</Label>
+                <Input
+                  id="tableQuantity"
+                  type="number"
+                  placeholder="e.g., 10"
+                  value={tableQuantity}
+                  onChange={(e) => setTableQuantity(e.target.value)}
+                />
               </div>
-            </RadioGroup>
-          </div>
+            </div>
+          ) : (
+            <div>
+              <Label htmlFor="ticketEntryType">Entry Type *</Label>
+              <RadioGroup value={ticketEntryType} onValueChange={setTicketEntryType}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="single" id="single" />
+                  <Label htmlFor="single" className="cursor-pointer font-normal">Single</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="couple" id="couple" />
+                  <Label htmlFor="couple" className="cursor-pointer font-normal">Couple</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          )}
 
           {ticketType !== "vip-guest" && (
             <>

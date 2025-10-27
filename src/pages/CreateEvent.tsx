@@ -54,6 +54,22 @@ const CreateEvent = () => {
   const [selectedEventType, setSelectedEventType] = useState("one-time");
   const [ticketPrice, setTicketPrice] = useState("49");
   const [artists, setArtists] = useState<Artist[]>([{ name: "", photo: "", instagram: "", spotify: "" }]);
+  const [advisory, setAdvisory] = useState({
+    smokingAllowed: false,
+    drinkingAllowed: false,
+    petsAllowed: false,
+    ageRestricted: false,
+    camerasAllowed: false,
+    outsideFoodAllowed: false,
+    seatingProvided: false,
+    wheelchairAccessible: false,
+    liveMusic: false,
+    parkingAvailable: false,
+    reentryAllowed: false,
+    onsitePayments: false,
+    securityCheck: false,
+    cloakroom: false,
+  });
 
   const categoryHierarchy = {
     Music: ["Bollywood", "Hip Hop", "Electronic", "Melodic", "Live Music", "Metal", "Rap", "Music House", "Techno", "K-pop", "Hollywood", "POP", "Punjabi", "Disco", "Rock", "Afrobeat", "Dance Hall", "Thumri", "Bolly Tech"],
@@ -136,6 +152,10 @@ const CreateEvent = () => {
         toast.error("Ending time is required");
         return;
       }
+      if (endDate < startDate) {
+        toast.error("Ending date must be after starting date");
+        return;
+      }
     }
 
     if (currentStep === 3) {
@@ -171,6 +191,17 @@ const CreateEvent = () => {
       if (!emailRegex.test(venueEmail)) {
         toast.error("Please enter a valid email address");
         return;
+      }
+    }
+
+    if (currentStep === 5) {
+      // Validate that all artists with names have Instagram
+      for (let i = 0; i < artists.length; i++) {
+        const artist = artists[i];
+        if (artist.name.trim() && !artist.instagram?.trim()) {
+          toast.error(`Instagram is required for Artist ${i + 1}`);
+          return;
+        }
       }
     }
 
@@ -475,19 +506,6 @@ const CreateEvent = () => {
               {/* Step 2: Date & Time */}
               {currentStep === 2 && (
                 <div className="space-y-4">
-                  <div>
-                    <Label>Event Type *</Label>
-                    <Select value={selectedEventType} onValueChange={setSelectedEventType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select event type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="one-time">One-time Event</SelectItem>
-                        <SelectItem value="recurring">Recurring Event</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="startDate">Starting Date *</Label>
@@ -495,7 +513,14 @@ const CreateEvent = () => {
                         id="startDate"
                         type="date"
                         value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                        onChange={(e) => {
+                          setStartDate(e.target.value);
+                          // Auto-adjust end date if it's before start date
+                          if (endDate && e.target.value > endDate) {
+                            setEndDate(e.target.value);
+                          }
+                        }}
                       />
                     </div>
                     <div>
@@ -516,6 +541,7 @@ const CreateEvent = () => {
                         id="endDate"
                         type="date"
                         value={endDate}
+                        min={startDate || new Date().toISOString().split('T')[0]}
                         onChange={(e) => setEndDate(e.target.value)}
                       />
                     </div>
@@ -790,7 +816,7 @@ const CreateEvent = () => {
                         </div>
 
                         <div>
-                          <Label htmlFor={`artist-instagram-${index}`}>Instagram (Optional)</Label>
+                          <Label htmlFor={`artist-instagram-${index}`}>Instagram *</Label>
                           <Input
                             id={`artist-instagram-${index}`}
                             placeholder="Enter Instagram handle"
@@ -832,6 +858,152 @@ const CreateEvent = () => {
                       placeholder="Enter any terms and conditions..."
                       rows={4}
                     />
+                  </div>
+
+                  <div className="space-y-4">
+                    <Label>Advisory</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="smokingAllowed"
+                          checked={advisory.smokingAllowed}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, smokingAllowed: checked as boolean })}
+                        />
+                        <Label htmlFor="smokingAllowed" className="cursor-pointer font-normal text-sm">
+                          🚬 Smoking allowed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="drinkingAllowed"
+                          checked={advisory.drinkingAllowed}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, drinkingAllowed: checked as boolean })}
+                        />
+                        <Label htmlFor="drinkingAllowed" className="cursor-pointer font-normal text-sm">
+                          🍺 Drinking allowed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="petsAllowed"
+                          checked={advisory.petsAllowed}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, petsAllowed: checked as boolean })}
+                        />
+                        <Label htmlFor="petsAllowed" className="cursor-pointer font-normal text-sm">
+                          🐾 Pets allowed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="ageRestricted"
+                          checked={advisory.ageRestricted}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, ageRestricted: checked as boolean })}
+                        />
+                        <Label htmlFor="ageRestricted" className="cursor-pointer font-normal text-sm">
+                          🔞 Show is 18+
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="camerasAllowed"
+                          checked={advisory.camerasAllowed}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, camerasAllowed: checked as boolean })}
+                        />
+                        <Label htmlFor="camerasAllowed" className="cursor-pointer font-normal text-sm">
+                          📸 Cameras and photos allowed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="outsideFoodAllowed"
+                          checked={advisory.outsideFoodAllowed}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, outsideFoodAllowed: checked as boolean })}
+                        />
+                        <Label htmlFor="outsideFoodAllowed" className="cursor-pointer font-normal text-sm">
+                          🍔 Outside food & drinks allowed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="seatingProvided"
+                          checked={advisory.seatingProvided}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, seatingProvided: checked as boolean })}
+                        />
+                        <Label htmlFor="seatingProvided" className="cursor-pointer font-normal text-sm">
+                          🪑 Seating provided
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="wheelchairAccessible"
+                          checked={advisory.wheelchairAccessible}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, wheelchairAccessible: checked as boolean })}
+                        />
+                        <Label htmlFor="wheelchairAccessible" className="cursor-pointer font-normal text-sm">
+                          ♿ Wheelchair accessible venue
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="liveMusic"
+                          checked={advisory.liveMusic}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, liveMusic: checked as boolean })}
+                        />
+                        <Label htmlFor="liveMusic" className="cursor-pointer font-normal text-sm">
+                          🎵 Live music
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="parkingAvailable"
+                          checked={advisory.parkingAvailable}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, parkingAvailable: checked as boolean })}
+                        />
+                        <Label htmlFor="parkingAvailable" className="cursor-pointer font-normal text-sm">
+                          🚗 Parking available
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="reentryAllowed"
+                          checked={advisory.reentryAllowed}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, reentryAllowed: checked as boolean })}
+                        />
+                        <Label htmlFor="reentryAllowed" className="cursor-pointer font-normal text-sm">
+                          🔁 Re-entry allowed
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="onsitePayments"
+                          checked={advisory.onsitePayments}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, onsitePayments: checked as boolean })}
+                        />
+                        <Label htmlFor="onsitePayments" className="cursor-pointer font-normal text-sm">
+                          💳 On-site payments available
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="securityCheck"
+                          checked={advisory.securityCheck}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, securityCheck: checked as boolean })}
+                        />
+                        <Label htmlFor="securityCheck" className="cursor-pointer font-normal text-sm">
+                          👮 Security check at entry
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="cloakroom"
+                          checked={advisory.cloakroom}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, cloakroom: checked as boolean })}
+                        />
+                        <Label htmlFor="cloakroom" className="cursor-pointer font-normal text-sm">
+                          🧥 Cloakroom available
+                        </Label>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-4">
