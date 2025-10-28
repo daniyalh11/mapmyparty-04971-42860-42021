@@ -36,7 +36,7 @@ const Header = ({ isAuthenticated = false, userRole = null, onLogout }: HeaderPr
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
             <Calendar className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span>EventHub</span>
+          <span>Map MyParty</span>
         </Link>
 
         {/* Desktop Navigation */}
