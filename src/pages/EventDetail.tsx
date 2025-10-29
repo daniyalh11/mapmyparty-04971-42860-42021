@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -107,6 +108,43 @@ Immerse yourself in a celebration of sound, art, and community. From indie rock 
       bio: "Premier event organizers bringing world-class entertainment to your city since 2010.",
       organizerId: "1",
     },
+    artists: [
+      { 
+        name: "DJ Shadow", 
+        photo: eventMusic, 
+        instagram: "@djshadow",
+        spotify: "https://spotify.com/djshadow" 
+      },
+      { 
+        name: "The Electric Souls", 
+        photo: eventConference, 
+        instagram: "@electricsouls",
+        spotify: "" 
+      },
+    ],
+    advisory: {
+      smokingAllowed: false,
+      drinkingAllowed: true,
+      petsAllowed: false,
+      ageRestricted: true,
+      camerasAllowed: true,
+      outsideFoodAllowed: false,
+      seatingProvided: true,
+      wheelchairAccessible: true,
+      liveMusic: true,
+      parkingAvailable: true,
+      reentryAllowed: false,
+      onsitePayments: true,
+      securityCheck: true,
+      cloakroom: true,
+      other: true,
+      customAdvisory: "Please arrive 30 minutes before the start time"
+    },
+    customQuestions: [
+      { question: "Dietary requirements?", answer: "We have vegetarian and vegan options available" },
+      { question: "T-shirt size for free merchandise?", answer: "Available sizes: S, M, L, XL, XXL" }
+    ],
+    termsAndConditions: "<p><strong>Event Terms:</strong></p><ul><li>All sales are final</li><li>No refunds</li><li>Must bring valid ID</li></ul>"
   };
 
   const scrollToLocation = () => {
@@ -181,6 +219,119 @@ Immerse yourself in a celebration of sound, art, and community. From indie rock 
             address={event.address}
             phone={event.phone}
           />
+
+          {/* Artist Info */}
+          {event.artists && event.artists.length > 0 && (
+            <section className="space-y-6">
+              <h2 className="text-3xl font-bold">Artists & Performers</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {event.artists.map((artist, index) => (
+                  <Card key={index}>
+                    <CardContent className="p-6">
+                      <div className="flex gap-4">
+                        {artist.photo && (
+                          <img 
+                            src={artist.photo} 
+                            alt={artist.name}
+                            className="w-20 h-20 rounded-full object-cover"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg">{artist.name}</h3>
+                          <div className="flex gap-3 mt-2">
+                            {artist.instagram && (
+                              <a 
+                                href={`https://instagram.com/${artist.instagram.replace('@', '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-primary hover:underline"
+                              >
+                                {artist.instagram}
+                              </a>
+                            )}
+                            {artist.spotify && (
+                              <a 
+                                href={artist.spotify}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-primary hover:underline"
+                              >
+                                Spotify
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Advisory Information */}
+          {event.advisory && (
+            <section className="space-y-6">
+              <h2 className="text-3xl font-bold">Event Advisory</h2>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {event.advisory.smokingAllowed && <p className="text-sm">🚬 Smoking allowed</p>}
+                    {event.advisory.drinkingAllowed && <p className="text-sm">🍺 Drinking allowed</p>}
+                    {event.advisory.petsAllowed && <p className="text-sm">🐾 Pets allowed</p>}
+                    {event.advisory.ageRestricted && <p className="text-sm">🔞 Show is 18+</p>}
+                    {event.advisory.camerasAllowed && <p className="text-sm">📸 Cameras and photos allowed</p>}
+                    {event.advisory.outsideFoodAllowed && <p className="text-sm">🍔 Outside food & drinks allowed</p>}
+                    {event.advisory.seatingProvided && <p className="text-sm">🪑 Seating provided</p>}
+                    {event.advisory.wheelchairAccessible && <p className="text-sm">♿ Wheelchair accessible venue</p>}
+                    {event.advisory.liveMusic && <p className="text-sm">🎵 Live music</p>}
+                    {event.advisory.parkingAvailable && <p className="text-sm">🚗 Parking available</p>}
+                    {event.advisory.reentryAllowed && <p className="text-sm">🔁 Re-entry allowed</p>}
+                    {event.advisory.onsitePayments && <p className="text-sm">💳 On-site payments available</p>}
+                    {event.advisory.securityCheck && <p className="text-sm">👮 Security check at entry</p>}
+                    {event.advisory.cloakroom && <p className="text-sm">🧥 Cloakroom available</p>}
+                    {event.advisory.other && event.advisory.customAdvisory && (
+                      <p className="text-sm col-span-2">📝 {event.advisory.customAdvisory}</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+          )}
+
+          {/* Custom Questions */}
+          {event.customQuestions && event.customQuestions.length > 0 && (
+            <section className="space-y-6">
+              <h2 className="text-3xl font-bold">Event Information</h2>
+              <div className="space-y-4">
+                {event.customQuestions.map((item, index) => (
+                  <Card key={index}>
+                    <CardContent className="p-6">
+                      <p className="font-medium mb-2">Q: {item.question}</p>
+                      {item.answer && (
+                        <p className="text-muted-foreground">A: {item.answer}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Terms and Conditions */}
+          {event.termsAndConditions && (
+            <section className="space-y-6">
+              <h2 className="text-3xl font-bold">Terms & Conditions</h2>
+              <Card>
+                <CardContent className="p-6">
+                  <div 
+                    className="prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: event.termsAndConditions }}
+                  />
+                </CardContent>
+              </Card>
+            </section>
+          )}
 
           {/* Organizer Info */}
           <OrganizerInfo

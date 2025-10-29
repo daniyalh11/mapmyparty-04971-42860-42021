@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { useEvents, Artist } from "@/hooks/useEvents";
 import eventMusic from "@/assets/event-music.jpg";
 import TicketTypeModal from "@/components/TicketTypeModal";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -69,7 +71,13 @@ const CreateEvent = () => {
     onsitePayments: false,
     securityCheck: false,
     cloakroom: false,
+    other: false,
   });
+  const [customAdvisory, setCustomAdvisory] = useState("");
+  const [termsAndConditions, setTermsAndConditions] = useState("");
+  const [customQuestions, setCustomQuestions] = useState<Array<{ question: string; answer: string }>>([]);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
 
   const categoryHierarchy = {
     Music: ["Bollywood", "Hip Hop", "Electronic", "Melodic", "Live Music", "Metal", "Rap", "Music House", "Techno", "K-pop", "Hollywood", "POP", "Punjabi", "Disco", "Rock", "Afrobeat", "Dance Hall", "Thumri", "Bolly Tech"],
@@ -853,11 +861,23 @@ const CreateEvent = () => {
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="terms">Terms & Conditions</Label>
-                    <Textarea
-                      id="terms"
-                      placeholder="Enter any terms and conditions..."
-                      rows={4}
-                    />
+                    <div className="border border-input rounded-md">
+                      <ReactQuill
+                        theme="snow"
+                        value={termsAndConditions}
+                        onChange={setTermsAndConditions}
+                        placeholder="Enter any terms and conditions..."
+                        modules={{
+                          toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            ['clean']
+                          ]
+                        }}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-4">
@@ -1003,18 +1023,90 @@ const CreateEvent = () => {
                           🧥 Cloakroom available
                         </Label>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="other"
+                          checked={advisory.other}
+                          onCheckedChange={(checked) => setAdvisory({ ...advisory, other: checked as boolean })}
+                        />
+                        <Label htmlFor="other" className="cursor-pointer font-normal text-sm">
+                          📝 Other
+                        </Label>
+                      </div>
                     </div>
+                    {advisory.other && (
+                      <div className="mt-3">
+                        <Input
+                          placeholder="Enter custom advisory..."
+                          value={customAdvisory}
+                          onChange={(e) => setCustomAdvisory(e.target.value)}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-4">
                     <Label>Custom Questions for Attendees</Label>
                     <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Input placeholder="Question (e.g., Dietary requirements?)" />
-                        <Button variant="outline" size="sm">
-                          + Add
+                      <div className="space-y-2">
+                        <Input 
+                          placeholder="Question (e.g., Dietary requirements?)" 
+                          value={newQuestion}
+                          onChange={(e) => setNewQuestion(e.target.value)}
+                        />
+                        <Textarea
+                          placeholder="Answer (optional - organizer can provide default answer)"
+                          value={newAnswer}
+                          onChange={(e) => setNewAnswer(e.target.value)}
+                          rows={2}
+                        />
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            if (newQuestion.trim()) {
+                              setCustomQuestions([...customQuestions, { question: newQuestion, answer: newAnswer }]);
+                              setNewQuestion("");
+                              setNewAnswer("");
+                              toast.success("Question added");
+                            } else {
+                              toast.error("Please enter a question");
+                            }
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Question
                         </Button>
                       </div>
+                      
+                      {customQuestions.length > 0 && (
+                        <div className="space-y-3 mt-4">
+                          {customQuestions.map((q, index) => (
+                            <Card key={index}>
+                              <CardContent className="pt-4">
+                                <div className="flex justify-between items-start gap-2">
+                                  <div className="flex-1 space-y-1">
+                                    <p className="font-medium text-sm">Q: {q.question}</p>
+                                    {q.answer && (
+                                      <p className="text-sm text-muted-foreground">A: {q.answer}</p>
+                                    )}
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      setCustomQuestions(customQuestions.filter((_, i) => i !== index));
+                                      toast.success("Question removed");
+                                    }}
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
