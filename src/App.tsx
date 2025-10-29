@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import UserDashboard from "./pages/UserDashboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
 import CreateEvent from "./pages/CreateEvent";
+import EventTypeSelection from "./pages/EventTypeSelection";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/organizer/dashboard" element={<OrganizerDashboard />} />
+          <Route path="/organizer/select-event-type" element={<EventTypeSelection />} />
           <Route path="/organizer/create-event" element={<CreateEvent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +39,7 @@ const CreateEvent = () => {
   const [savedTickets, setSavedTickets] = useState<any[]>([]);
   
   const editId = searchParams.get('edit');
+  const eventTypeParam = searchParams.get('type');
   const isEditMode = !!editId;
   
   // Form data
@@ -78,6 +80,7 @@ const CreateEvent = () => {
   const [customQuestions, setCustomQuestions] = useState<Array<{ question: string; answer: string }>>([]);
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
+  const [selectedEventTypeCategory, setSelectedEventTypeCategory] = useState("");
 
   const categoryHierarchy = {
     Music: ["Bollywood", "Hip Hop", "Electronic", "Melodic", "Live Music", "Metal", "Rap", "Music House", "Techno", "K-pop", "Hollywood", "POP", "Punjabi", "Disco", "Rock", "Afrobeat", "Dance Hall", "Thumri", "Bolly Tech"],
@@ -110,6 +113,18 @@ const CreateEvent = () => {
       }
     }
   }, [editId, events]);
+
+  // Set event type category from URL params
+  useEffect(() => {
+    if (eventTypeParam) {
+      const typeMap: Record<string, string> = {
+        "guest-list": "Guest List Event",
+        "exclusive": "Exclusive Event",
+        "non-exclusive": "Non-Exclusive Event",
+      };
+      setSelectedEventTypeCategory(typeMap[eventTypeParam] || "");
+    }
+  }, [eventTypeParam]);
 
   const steps = [
     { number: 1, title: "Event Details" },
@@ -337,9 +352,16 @@ const CreateEvent = () => {
           <Card className="mb-6">
             <CardContent className="p-6">
               <div className="mb-4">
-                <h1 className="text-2xl font-bold mb-2">
-                  {isEditMode ? "Update Event" : "Create New Event"}
-                </h1>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-2xl font-bold">
+                    {isEditMode ? "Update Event" : "Create New Event"}
+                  </h1>
+                  {selectedEventTypeCategory && (
+                    <Badge variant="secondary" className="text-sm">
+                      {selectedEventTypeCategory}
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-muted-foreground">
                   Step {currentStep} of 6: {steps[currentStep - 1].title}
                 </p>

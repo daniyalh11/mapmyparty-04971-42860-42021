@@ -143,7 +143,7 @@ const OrganizerDashboard = () => {
                 Manage your events and track performance
               </p>
             </div>
-            <Link to="/organizer/create-event">
+            <Link to="/organizer/select-event-type">
               <Button variant="accent" size="lg">
                 <Plus className="w-5 h-5 mr-2" />
                 Create Event
