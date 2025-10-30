@@ -5,15 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, User, Building2 } from "lucide-react";
+import { Calendar, User, Building2, UserCog } from "lucide-react";
 import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [userType, setUserType] = useState<"user" | "organizer" | null>(null);
+  const [userType, setUserType] = useState<"user" | "organizer" | "promoter" | null>(null);
   const [isLogin, setIsLogin] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent, type: "user" | "organizer") => {
+  const handleSubmit = (e: React.FormEvent, type: "user" | "organizer" | "promoter") => {
     e.preventDefault();
     
     // Mock authentication - store user type in sessionStorage
@@ -25,15 +25,33 @@ const Auth = () => {
     // Redirect based on user type
     if (type === "organizer") {
       navigate("/organizer/dashboard");
+    } else if (type === "promoter") {
+      navigate("/promoter/dashboard");
     } else {
       navigate("/dashboard");
     }
+  };
+
+  const handlePromoterLogin = () => {
+    setUserType("promoter");
   };
 
   if (!userType) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-primary-glow p-4">
         <div className="w-full max-w-4xl">
+          <div className="absolute top-4 right-4">
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={handlePromoterLogin}
+              className="gap-2"
+            >
+              <UserCog className="w-4 h-4" />
+              Login as Promoter
+            </Button>
+          </div>
+          
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
               <div className="w-12 h-12 rounded-xl bg-background flex items-center justify-center">
@@ -124,7 +142,7 @@ const Auth = () => {
             </div>
           </div>
           <CardTitle className="text-2xl">
-            {userType === "organizer" ? "Organizer" : "Attendee"} Account
+            {userType === "organizer" ? "Organizer" : userType === "promoter" ? "Promoter" : "Attendee"} Account
           </CardTitle>
           <CardDescription>
             {isLogin ? "Welcome back! Sign in to your account" : "Create your account to get started"}

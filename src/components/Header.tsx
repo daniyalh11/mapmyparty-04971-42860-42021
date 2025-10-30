@@ -5,7 +5,7 @@ import { useState } from "react";
 
 interface HeaderProps {
   isAuthenticated?: boolean;
-  userRole?: "user" | "organizer" | null;
+  userRole?: "user" | "organizer" | "promoter" | null;
   onLogout?: () => void;
 }
 
@@ -40,7 +40,7 @@ const Header = ({ isAuthenticated = false, userRole = null, onLogout }: HeaderPr
         </Link>
 
         {/* Desktop Navigation */}
-        {userRole !== "organizer" && (
+        {userRole !== "organizer" && userRole !== "promoter" && (
           <nav className="hidden md:flex items-center gap-6">
             <Link to="/events" className="text-sm font-medium hover:text-primary transition-colors">
               Browse Events
@@ -60,7 +60,11 @@ const Header = ({ isAuthenticated = false, userRole = null, onLogout }: HeaderPr
             <>
               <Button
                 variant="ghost"
-                onClick={() => navigate(userRole === "organizer" ? "/organizer/dashboard" : "/dashboard")}
+                onClick={() => navigate(
+                  userRole === "organizer" ? "/organizer/dashboard" : 
+                  userRole === "promoter" ? "/promoter/dashboard" : 
+                  "/dashboard"
+                )}
               >
                 Dashboard
               </Button>
@@ -93,7 +97,7 @@ const Header = ({ isAuthenticated = false, userRole = null, onLogout }: HeaderPr
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-background">
           <nav className="container py-4 flex flex-col gap-4">
-            {userRole !== "organizer" && (
+            {userRole !== "organizer" && userRole !== "promoter" && (
               <>
                 <Link
                   to="/events"
@@ -123,7 +127,11 @@ const Header = ({ isAuthenticated = false, userRole = null, onLogout }: HeaderPr
                 <Button
                   variant="ghost"
                   onClick={() => {
-                    navigate(userRole === "organizer" ? "/organizer/dashboard" : "/dashboard");
+                    navigate(
+                      userRole === "organizer" ? "/organizer/dashboard" : 
+                      userRole === "promoter" ? "/promoter/dashboard" : 
+                      "/dashboard"
+                    );
                     setMobileMenuOpen(false);
                   }}
                   className="justify-start"
